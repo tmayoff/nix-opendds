@@ -78,6 +78,7 @@
 
           nativeBuildInputs = with pkgs; [
             cmake
+            perl
             ninja
           ];
 
@@ -86,8 +87,8 @@
           ];
 
           cmakeFlags = [
-            "-DOPENDDS_ACE=${ace_tao}/ACE"
-            "-DOPENDDS_TAO=${ace_tao}/TAO"
+            "-DOPENDDS_ACE=${ace_tao}/share/ace"
+            "-DOPENDDS_TAO=${ace_tao}/share/tao"
             "-DOPENDDS_RAPIDJSON="
           ];
         };
@@ -97,7 +98,6 @@
         devShell = pkgs.mkShell.override {stdenv = pkgs.clangStdenv;} {
           nativeBuildInputs = with pkgs; [
             clang-tools
-
             python3
             perl
             ninja
