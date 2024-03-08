@@ -1,7 +1,7 @@
 image: nixos/unstable
 
 sources:
-    - https://git.sr.ht/~tmayoff/opendds-nixpkgs
+    - https://git.sr.ht/~tmayoff/opendds-nixpkgs#$GIT_REF
 environment:
   NIX_CONFIG: "experimental-features = nix-command flakes"
 tasks:

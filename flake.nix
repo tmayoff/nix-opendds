@@ -13,68 +13,34 @@
           inherit system;
         };
       in rec {
-        ace_tao = pkgs.stdenv.mkDerivation {
-          name = "ACE_TAO";
-          version = "7.1.3";
-          src = pkgs.fetchurl {
-            url = "https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-7_1_3/ACE+TAO-7.1.3.tar.gz";
-            hash = "sha256-C1iSb8eAUGeAxp6erujlvHoCi88tP5RxHQdExJkmrKE=";
-          };
-
-          buildInputs = with pkgs; [
-            perl
-          ];
-
-          postPatch = ''
-            patchShebangs ./bin/mwc.pl
-            patchShebangs ./MPC/prj_install.pl
-          '';
-
-          configurePhase = ''
-            export INSTALL_PREFIX=$out
-            export ACE_ROOT=$(pwd)
-            export TAO_ROOT=$(pwd)/TAO
-            export MPC_ROOT=$(pwd)/MPC
-            export LD_LIBRARY_PATH="$ACE_ROOT/ace:$ACE_ROOT/lib"
-
-            echo '#include "ace/config-linux.h"' > ace/config.h
-            echo 'include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU'\
-              > $ACE_ROOT/include/makeinclude/platform_macros.GNU
-
-            cd TAO
-            $ACE_ROOT/bin/mwc.pl TAO_ACE.mwc -type gnuace
-            cd ..
-          '';
-
-          buildPhase = ''
-            export INSTALL_PREFIX=$out
-            export ACE_ROOT=$(pwd)
-            export TAO_ROOT=$(pwd)/TAO
-            export MPC_ROOT=$(pwd)/MPC
-            export LD_LIBRARY_PATH="$ACE_ROOT/ace:$ACE_ROOT/lib"
-            cd $TAO_ROOT
-            make -j8
-            cd ..
-          '';
-
-          installPhase = ''
-            export INSTALL_PREFIX=$out
-            export ACE_ROOT=$(pwd)
-            export TAO_ROOT=$(pwd)/TAO
-            export MPC_ROOT=$(pwd)/MPC
-            cd $TAO_ROOT
-            make install
-          '';
-        };
-
+        mpc = pkgs.stdenv.mkDerivation {};
         opendds = pkgs.stdenv.mkDerivation {
           name = "OpenDDS";
-          src = pkgs.fetchFromGitHub {
-            owner = "OpenDDS";
-            repo = "OpenDDS";
-            rev = "master";
-            hash = "sha256-LULh2Dw1MlLTH2pqS8L0hCR9yTAtB9yCmTbwwC6O6Z4=";
-          };
+          srcs = [
+            (pkgs.fetchFromGitHub {
+              name = "OpenDDS";
+              owner = "OpenDDS";
+              repo = "OpenDDS";
+              rev = "master";
+              hash = "sha256-LULh2Dw1MlLTH2pqS8L0hCR9yTAtB9yCmTbwwC6O6Z4=";
+            })
+            (pkgs.fetchFromGitHub {
+              name = "ACE_TAO";
+              owner = "DOCGroup";
+              repo = "ACE_TAO";
+              rev = "master";
+              hash = "sha256-+i4p7ohYPmksBuNyHF0hCqzH+yi3TYWJjvJdR1UjMI4=";
+            })
+            (pkgs.fetchFromGitHub {
+              name = "MPC";
+              owner = "DOCGroup";
+              repo = "MPC";
+              rev = "master";
+              hash = "sha256-i5dvSQjrFYnspIjT2KNXe6EL2eOv6OnDsQoabOrRV5o=";
+            })
+          ];
+
+          sourceRoot = ".";
 
           nativeBuildInputs = with pkgs; [
             cmake
@@ -83,14 +49,21 @@
           ];
 
           buildInputs = [
-            ace_tao
+            
           ];
 
           cmakeFlags = [
-            "-DOPENDDS_ACE=${ace_tao}/share/ace"
-            "-DOPENDDS_TAO=${ace_tao}/share/tao"
+            "-DOPENDDS_ACE_TAO_SRC=../ACE_TAO"
             "-DOPENDDS_RAPIDJSON="
           ];
+
+          configurePhase = ''
+            ls -la ./
+            mkdir OpenDDS/build
+            cd OpenDDS/build
+            #cmake .. -DOPENDDS_ACE=../../ACE_TAO/ACE -DOPENDDS_TAO=../../ACE_TAO/TAO -DOPENDDS_MPC=../../MPC
+            cmake .. -DOPENDDS_ACE_TAO_SRC=../../ACE_TAO -DOPENDDS_MPC=../../MPC
+          '';
         };
 
         defaultPackage = opendds;
