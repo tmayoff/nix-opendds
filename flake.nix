@@ -49,20 +49,15 @@
           ];
 
           buildInputs = [
-            
-          ];
-
-          cmakeFlags = [
-            "-DOPENDDS_ACE_TAO_SRC=../ACE_TAO"
-            "-DOPENDDS_RAPIDJSON="
           ];
 
           configurePhase = ''
+            export ACE_ROOT=$(pwd)/ACE_TAO/ACE
+            export TAO_ROOT=$(pwd)/ACE_TAO/TAO
             ls -la ./
             mkdir OpenDDS/build
             cd OpenDDS/build
-            #cmake .. -DOPENDDS_ACE=../../ACE_TAO/ACE -DOPENDDS_TAO=../../ACE_TAO/TAO -DOPENDDS_MPC=../../MPC
-            cmake .. -DOPENDDS_ACE_TAO_SRC=../../ACE_TAO -DOPENDDS_MPC=../../MPC
+            VERBOSE=1 cmake .. -DOPENDDS_ACE_TAO_SRC=../../ACE_TAO -DOPENDDS_ACE=../../ACE_TAO/ACE -DOPENDDS_TAO=../../ACE_TAO/TAO -DOPENDDS_MPC=../../MPC
           '';
         };
 
