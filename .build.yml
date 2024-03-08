@@ -1,10 +1,13 @@
 image: nixos/unstable
 
 sources:
-    - https://git.sr.ht/~tmayoff/opendds-nixpkgs#$GIT_REF
+    - "https://git.sr.ht/~tmayoff/opendds-nixpkgs"
 environment:
   NIX_CONFIG: "experimental-features = nix-command flakes"
 tasks:
+    - checkout: |
+        cd opendds-nixpkgs
+        git checkout $GIT_REF
     - build: |
         cd opendds-nixpkgs
         nix build
