@@ -13,56 +13,31 @@
           inherit system;
         };
       in rec {
-        mpc = pkgs.stdenv.mkDerivation {
-          name = "MPC";
-          src = pkgs.fetchFromGitHub {
-            owner = "DOCGroup";
-            repo = "MPC";
-            rev = "master";
-            hash = "sha256-i5dvSQjrFYnspIjT2KNXe6EL2eOv6OnDsQoabOrRV5o=";
-          };
-
-          phases = ["patchPhase" "installPhase"];
-
-          postPatch = ''
-            patchShebangs prj_install.pl
-          '';
-
-          installPhase = ''
-            mkdir -p $out
-            cp -r $src/* $out/
-          '';
-        };
-
         ace_tao = pkgs.stdenv.mkDerivation {
           name = "ACE_TAO";
-          src = pkgs.fetchFromGitHub {
-            owner = "DOCGroup";
-            repo = "ACE_TAO";
-            rev = "master";
-            hash = "sha256-+i4p7ohYPmksBuNyHF0hCqzH+yi3TYWJjvJdR1UjMI4=";
+          version = "7.1.3";
+          src = pkgs.fetchurl {
+            url = "https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-7_1_3/ACE+TAO-7.1.3.tar.gz";
+            hash = "sha256-C1iSb8eAUGeAxp6erujlvHoCi88tP5RxHQdExJkmrKE=";
           };
-
-          nativeBuildInputs = [
-            mpc
-          ];
 
           buildInputs = with pkgs; [
             perl
           ];
 
           postPatch = ''
-            patchShebangs ACE/bin/mwc.pl
+            patchShebangs ./bin/mwc.pl
+            patchShebangs ./MPC/prj_install.pl
           '';
 
           configurePhase = ''
             export INSTALL_PREFIX=$out
-            export ACE_ROOT=$(pwd)/ACE
+            export ACE_ROOT=$(pwd)
             export TAO_ROOT=$(pwd)/TAO
-            export MPC_ROOT=${mpc}
+            export MPC_ROOT=$(pwd)/MPC
             export LD_LIBRARY_PATH="$ACE_ROOT/ace:$ACE_ROOT/lib"
 
-            echo '#include "ace/config-linux.h"' > ACE/ace/config.h
+            echo '#include "ace/config-linux.h"' > ace/config.h
             echo 'include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU'\
               > $ACE_ROOT/include/makeinclude/platform_macros.GNU
 
@@ -73,9 +48,9 @@
 
           buildPhase = ''
             export INSTALL_PREFIX=$out
-            export ACE_ROOT=$(pwd)/ACE
+            export ACE_ROOT=$(pwd)
             export TAO_ROOT=$(pwd)/TAO
-            export MPC_ROOT=${mpc}
+            export MPC_ROOT=$(pwd)/MPC
             export LD_LIBRARY_PATH="$ACE_ROOT/ace:$ACE_ROOT/lib"
             cd $TAO_ROOT
             make -j8
@@ -84,9 +59,9 @@
 
           installPhase = ''
             export INSTALL_PREFIX=$out
-            export ACE_ROOT=$(pwd)/ACE
+            export ACE_ROOT=$(pwd)
             export TAO_ROOT=$(pwd)/TAO
-            export MPC_ROOT=${mpc}
+            export MPC_ROOT=$(pwd)/MPC
             cd $TAO_ROOT
             make install
           '';
