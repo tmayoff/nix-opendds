@@ -21,8 +21,8 @@
               name = "OpenDDS";
               owner = "OpenDDS";
               repo = "OpenDDS";
-              rev = "master";
-              hash = "sha256-LULh2Dw1MlLTH2pqS8L0hCR9yTAtB9yCmTbwwC6O6Z4=";
+              rev = "DDS-3.27";
+              hash = "sha256-wPcrXiR8Cm8/DpdfioiXu8euDabr0GpvZM+04+ERmns=";
             })
             (pkgs.fetchFromGitHub {
               name = "ACE_TAO";
@@ -49,15 +49,24 @@
           ];
 
           buildInputs = [
+            #pkgs.breakpointHook
           ];
 
           configurePhase = ''
-            export ACE_ROOT=$(pwd)/ACE_TAO/ACE
-            export TAO_ROOT=$(pwd)/ACE_TAO/TAO
-            ls -la ./
+            echo $(pwd)
+            export ACE_TAO_ROOT=$(pwd)/ACE_TAO
+            export MPC_ROOT=$(pwd)/MPC
+            #ls -la $ACE_ROOT
             mkdir OpenDDS/build
             cd OpenDDS/build
-            VERBOSE=1 cmake .. -DOPENDDS_ACE_TAO_SRC=../../ACE_TAO -DOPENDDS_ACE=../../ACE_TAO/ACE -DOPENDDS_TAO=../../ACE_TAO/TAO -DOPENDDS_MPC=../../MPC
+            cmake -G Ninja .. -DOPENDDS_ACE_TAO_SRC=$ACE_TAO_ROOT -DOPENDDS_MPC=$MPC_ROOT -DOPENDDS_RAPIDJSON=""
+          '';
+
+          buildPhase = ''
+            export ACE_TAO_ROOT=$NIX_BUILD_TOP/ACE_TAO
+            export MPC_ROOT=$NIX_BUILD_TOP/MPC
+            ls -la /build
+            ninja
           '';
         };
 
