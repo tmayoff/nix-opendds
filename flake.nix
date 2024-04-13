@@ -28,15 +28,15 @@
               name = "ACE_TAO";
               owner = "DOCGroup";
               repo = "ACE_TAO";
-              rev = "master";
-              hash = "sha256-+i4p7ohYPmksBuNyHF0hCqzH+yi3TYWJjvJdR1UjMI4=";
+              rev = "ACE+TAO-7_1_4";
+              hash = "sha256-ICTChzwFkQMymT60T5DiyKLSd7PcP8TXcU6RfRJr5Uw=";
             })
             (pkgs.fetchFromGitHub {
               name = "MPC";
               owner = "DOCGroup";
               repo = "MPC";
               rev = "master";
-              hash = "sha256-i5dvSQjrFYnspIjT2KNXe6EL2eOv6OnDsQoabOrRV5o=";
+              hash = "sha256-Ia3Rt2k092E1frYWuHGNeRYHF0LHe8zBfhjAOuj7V00=";
             })
           ];
 
@@ -46,27 +46,26 @@
             cmake
             perl
             ninja
+
+            ripgrep
+            fd
+
+            #breakpointHook
           ];
 
-          buildInputs = [
-            #pkgs.breakpointHook
-          ];
+          patchPhase = ''
+            cp -r /build/ACE_TAO /build/OpenDDS
+          '';
 
           configurePhase = ''
-            echo $(pwd)
-            export ACE_TAO_ROOT=$(pwd)/ACE_TAO
-            export MPC_ROOT=$(pwd)/MPC
-            #ls -la $ACE_ROOT
-            mkdir OpenDDS/build
-            cd OpenDDS/build
-            cmake -G Ninja .. -DOPENDDS_ACE_TAO_SRC=$ACE_TAO_ROOT -DOPENDDS_MPC=$MPC_ROOT -DOPENDDS_RAPIDJSON=""
+            cd /build/OpenDDS
+            cmake -S. -Bbuild -G Ninja -DOPENDDS_ACE_TAO_SRC="$(pwd)/ACE_TAO" -DOPENDDS_MPC="$(pwd)/../MPC" -DOPENDDS_RAPIDJSON=""
           '';
 
           buildPhase = ''
-            export ACE_TAO_ROOT=$NIX_BUILD_TOP/ACE_TAO
-            export MPC_ROOT=$NIX_BUILD_TOP/MPC
-            ls -la /build
-            ninja
+            cd /build/OpenDDS
+            ls -la ACE_TAO
+            cmake --build build
           '';
         };
 
