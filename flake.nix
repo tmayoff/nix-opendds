@@ -48,7 +48,7 @@
           ];
 
           configurePhase = ''
-            cmake -SOpenDDS -BOpenDDS/build -DOPENDDS_ACE_TAO_SRC="$(pwd)/ACE_TAO" -DOPENDDS_MPC="$(pwd)/MPC" -DOPENDDS_RAPIDJSON=""
+            cmake -SOpenDDS -BOpenDDS/build -DOPENDDS_ACE_TAO_SRC="$(pwd)/ACE_TAO" -DOPENDDS_MPC="$(pwd)/MPC" -DOPENDDS_RAPIDJSON="" -DCMAKE_INSTALL_PREFIX=$prefix
           '';
 
           buildPhase = ''
