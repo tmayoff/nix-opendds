@@ -16,4 +16,5 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v6
       - uses: cachix/cachix-action@v14
         with:
+          name: tmayoff
           authToken: ${{ secrets.CACHIX_AUTH }}
