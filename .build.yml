@@ -9,5 +9,5 @@ tasks:
         cd opendds-nixpkgs
     - build: |
         cd opendds-nixpkgs
-        nix build
+        nix build -L
 
