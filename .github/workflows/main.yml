@@ -19,4 +19,4 @@ jobs:
           name: tmayoff
           authToken: ${{ secrets.CACHIX_AUTH }}
       - name: Build and cache
-        run: nix build --json | jq -r '.[].outputs | to_entries[].value' | cachix push
+        run: nix build --json | jq -r '.[].outputs | to_entries[].value' | cachix push tmayoff
