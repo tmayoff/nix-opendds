@@ -14,5 +14,5 @@ tasks:
         cachix authtoken $(cat ~/.tokens)
     - build: |
         cd opendds-nixpkgs
-        nix-build | cachix push tmayoff
+        nix build | cachix push tmayoff
 
