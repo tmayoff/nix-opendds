@@ -7,7 +7,6 @@ environment:
 tasks:
     - checkout: |
         cd opendds-nixpkgs
-        git checkout $GIT_REF
     - build: |
         cd opendds-nixpkgs
         nix build
