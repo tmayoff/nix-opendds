@@ -2,12 +2,17 @@ image: nixos/unstable
 
 sources:
     - "https://git.sr.ht/~tmayoff/opendds-nixpkgs"
+secrets:
+    - 51ef0001-3b39-42b1-9205-6b5fa63a9d4c
 environment:
   NIX_CONFIG: "experimental-features = nix-command flakes"
 tasks:
     - checkout: |
         cd opendds-nixpkgs
+    - cachix: |
+        nix-env -iA cachix -f https://cachix.org/api/v1/install
+        cachix authtoken $(cat ~/.tokens)
     - build: |
         cd opendds-nixpkgs
-        nix build -L
+        nix-build | cachix push tmayoff
 

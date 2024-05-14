@@ -52,11 +52,11 @@
           '';
 
           buildPhase = ''
-            cmake --build OpenDDS/build
+            cmake --build OpenDDS/build -j $NIX_BUILD_CORES
           '';
 
           installPhase = ''
-            
+            cmake --install OpenDDS/build
           '';
         };
 
