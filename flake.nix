@@ -21,8 +21,8 @@
               name = "OpenDDS";
               owner = "OpenDDS";
               repo = "OpenDDS";
-              rev = "DDS-3.27";
-              hash = "sha256-wPcrXiR8Cm8/DpdfioiXu8euDabr0GpvZM+04+ERmns=";
+              rev = "DDS-3.28.1";
+              hash = "sha256-aa+4RLtu6gY6QrV2t9MzLiw9bo0VimGBt0aVeDS9GeU=";
             })
             (pkgs.fetchFromGitHub {
               name = "ACE_TAO";
@@ -36,7 +36,7 @@
               owner = "DOCGroup";
               repo = "MPC";
               rev = "master";
-              hash = "sha256-Ia3Rt2k092E1frYWuHGNeRYHF0LHe8zBfhjAOuj7V00=";
+              hash = "sha256-AEm4CI3GVa3eHOVFBTTMooVXYeW0qywZomQfTvJ/Lvs=";
             })
           ];
 
@@ -45,27 +45,18 @@
           nativeBuildInputs = with pkgs; [
             cmake
             perl
-            ninja
-
-            ripgrep
-            fd
-
-            #breakpointHook
           ];
 
-          patchPhase = ''
-            cp -r /build/ACE_TAO /build/OpenDDS
-          '';
-
           configurePhase = ''
-            cd /build/OpenDDS
-            cmake -S. -Bbuild -G Ninja -DOPENDDS_ACE_TAO_SRC="$(pwd)/ACE_TAO" -DOPENDDS_MPC="$(pwd)/../MPC" -DOPENDDS_RAPIDJSON=""
+            cmake -SOpenDDS -BOpenDDS/build -DOPENDDS_ACE_TAO_SRC="$(pwd)/ACE_TAO" -DOPENDDS_MPC="$(pwd)/MPC" -DOPENDDS_RAPIDJSON=""
           '';
 
           buildPhase = ''
-            cd /build/OpenDDS
-            ls -la ACE_TAO
-            cmake --build build
+            cmake --build OpenDDS/build
+          '';
+
+          installPhase = ''
+            
           '';
         };
 
@@ -76,7 +67,6 @@
             clang-tools
             python3
             perl
-            ninja
           ];
 
           buildInputs = with pkgs; [
