@@ -51,5 +51,6 @@ stdenv.mkDerivation {
 
   installPhase = ''
     cmake --install OpenDDS/build
+    make -C /OpenDDS/ACE_TAO install 
   '';
 }
