@@ -4,21 +4,24 @@
   cmake,
   perl,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "OpenDDS";
+  version = "3.28.1";
+  ace_version = "7_1_4";
+
   srcs = [
     (fetchFromGitHub {
       name = "OpenDDS";
       owner = "OpenDDS";
       repo = "OpenDDS";
-      rev = "DDS-3.28.1";
+      rev = "DDS-${version}";
       hash = "sha256-aa+4RLtu6gY6QrV2t9MzLiw9bo0VimGBt0aVeDS9GeU=";
     })
     (fetchFromGitHub {
       name = "ACE_TAO";
       owner = "DOCGroup";
       repo = "ACE_TAO";
-      rev = "ACE+TAO-7_1_4";
+      rev = "ACE+TAO-${ace_version}";
       hash = "sha256-ICTChzwFkQMymT60T5DiyKLSd7PcP8TXcU6RfRJr5Uw=";
     })
     (fetchFromGitHub {
@@ -37,6 +40,10 @@ stdenv.mkDerivation {
     perl
   ];
 
+  postPatch = ''
+    patchShebangs /build/MPC/prj_install.pl
+  '';
+
   postUnpack = ''
     cp -r /build/ACE_TAO /build/OpenDDS
   '';
@@ -53,7 +60,8 @@ stdenv.mkDerivation {
     cmake --install OpenDDS/build
     export ACE_ROOT=/build/OpenDDS/ACE_TAO/ACE
     export TAO_ROOT=/build/OpenDDS/ACE_TAO/TAO
+    export MPC_ROTT=/build/MPC
     export INSTALL_PREFIX=$prefix
-    make -C /build/OpenDDS/ACE_TAO install 
+    make -C /build/OpenDDS/ACE_TAO install
   '';
 }
