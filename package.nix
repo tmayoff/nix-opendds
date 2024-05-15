@@ -53,6 +53,7 @@ stdenv.mkDerivation {
     cmake --install OpenDDS/build
     export ACE_ROOT=/build/OpenDDS/ACE_TAO/ACE
     export TAO_ROOT=/build/OpenDDS/ACE_TAO/TAO
+    export INSTALL_PREFIX=$prefix
     make -C /build/OpenDDS/ACE_TAO install 
   '';
 }
