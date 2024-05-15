@@ -37,8 +37,12 @@ stdenv.mkDerivation {
     perl
   ];
 
+  postUnpack = ''
+    cp -r /build/ACE_TAO /build/OpenDDS
+  '';
+
   configurePhase = ''
-    cmake -SOpenDDS -BOpenDDS/build -DOPENDDS_ACE_TAO_SRC="$(pwd)/ACE_TAO" -DOPENDDS_MPC="$(pwd)/MPC" -DOPENDDS_RAPIDJSON="" -DCMAKE_INSTALL_PREFIX=$prefix
+    cmake -SOpenDDS -BOpenDDS/build -DOPENDDS_ACE_TAO_SRC="/build/OpenDDS/ACE_TAO" -DOPENDDS_MPC="/build/MPC" -DOPENDDS_RAPIDJSON="" -DCMAKE_INSTALL_PREFIX=$prefix
   '';
 
   buildPhase = ''
