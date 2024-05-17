@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
     cmake --install OpenDDS/build
     export ACE_ROOT=/build/OpenDDS/ACE_TAO/ACE
     export TAO_ROOT=/build/OpenDDS/ACE_TAO/TAO
-    export MPC_ROTT=/build/MPC
+    export MPC_ROOT=/build/MPC
     export INSTALL_PREFIX=$prefix
     make -C /build/OpenDDS/ACE_TAO install
   '';
