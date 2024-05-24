@@ -12,9 +12,15 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-      in {
+      in rec {
         packages.opendds = pkgs.callPackage ./package.nix {};
         packages.default = self.packages.${system}.opendds;
+
+        devShell = pkgs.mkShell {
+          buildInputs = [
+            packages.opendds
+          ];
+        };
       }
     );
 }
