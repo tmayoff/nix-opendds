@@ -33,37 +33,40 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  sourceRoot = ".";
+  sourceRoot = "OpenDDS";
 
   nativeBuildInputs = [
     cmake
     perl
   ];
 
-  postPatch = ''
-    patchShebangs /build/MPC/prj_install.pl
-  '';
+  phases = ["unpackPhase" "configurePhase" "buildPhase" "installPhase"];
 
   postUnpack = ''
     cp -r /build/ACE_TAO /build/OpenDDS
+    cp -r /build/MPC /build/OpenDDS
+    patchShebangs /build/OpenDDS/MPC/prj_install.pl /build/OpenDDS/configure
+    chmod -R +w /build/OpenDDS
   '';
 
   configurePhase = ''
-    cmake -SOpenDDS -BOpenDDS/build -DOPENDDS_ACE_TAO_SRC="/build/OpenDDS/ACE_TAO" -DOPENDDS_MPC="/build/MPC" -DOPENDDS_RAPIDJSON="" -DCMAKE_INSTALL_PREFIX=$prefix -DOPENDDS_BUILD_TESTS=On
+    export ACE_ROOT=/build/OpenDDS/ACE_TAO/ACE
+    export TAO_ROOT=/build/OpenDDS/ACE_TAO/TAO
+    export MPC_ROOT=/build/OpenDDS/MPC
+    ls -la
+    ./configure --optimize --no-debug --no-rapidjson --prefix=$out
   '';
 
   buildPhase = ''
-    cmake --build OpenDDS/build -j $NIX_BUILD_CORES
+    make -j $NIX_BUILD_CORES
   '';
 
-  doCheck = true;
-
   installPhase = ''
-    cmake --install OpenDDS/build
     export ACE_ROOT=/build/OpenDDS/ACE_TAO/ACE
     export TAO_ROOT=/build/OpenDDS/ACE_TAO/TAO
     export MPC_ROOT=/build/MPC
     export INSTALL_PREFIX=$prefix
-    make -C /build/OpenDDS/ACE_TAO install
+    make install
+    # make -C /build/OpenDDS/ACE_TAO install
   '';
 }
